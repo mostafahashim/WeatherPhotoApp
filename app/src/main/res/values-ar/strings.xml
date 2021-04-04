@@ -53,5 +53,9 @@
     <string name="empty_history">Empty History</string>
     <string name="there_is_no_added_photo">There is no added photo</string>
     <string name="add_new_photo">Add New Photo</string>
+    <string name="place_name">Place Name</string>
+    <string name="temperature_with_degree">%s\u2103</string>
+    <string name="time">Time</string>
+    <string name="clear">Clear</string>
 
 </resources>

@@ -19,6 +19,19 @@ class JsonParser {
         }
     }
 
+    fun getWeatherResponseModel(response: String?): WeatherResponseModel? {
+        return try {
+            val gson = Gson()
+            val type = object : TypeToken<WeatherResponseModel>() {
+
+            }.type
+            gson.fromJson(response, type)
+        } catch (e1: Exception) {
+            e1.printStackTrace()
+            null
+        }
+    }
+
 }
 
 

@@ -68,6 +68,9 @@ class CaptureImageActivity : BaseActivity(
         onPrepareNewImageViews()
     }
 
+    override fun setListener() {
+    }
+
     override fun onPrepareNewImageViews() {
         runOnUiThread {
             if (binding.viewModel?.isSavedFileInitialized()!! && binding.viewModel?.savedFile != null
@@ -232,7 +235,8 @@ class CaptureImageActivity : BaseActivity(
         }
     }
 
-    override fun setListener() {
+    override fun openLocationDetails() {
+
     }
 
     override fun onPause() {

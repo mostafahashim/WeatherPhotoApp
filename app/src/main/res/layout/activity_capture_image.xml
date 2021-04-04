@@ -47,8 +47,8 @@
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:background="@drawable/layout_bg_transparent_gray_selector_with_bg_transparent"
-                    android:padding="@dimen/padding_20"
                     android:onClick="@{()->viewModel.observer.onPrepareNewImageViews()}"
+                    android:padding="@dimen/padding_20"
                     android:src="@drawable/close_white_icon" />
 
                 <ImageView
@@ -57,8 +57,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/padding_20"
                     android:adjustViewBounds="true"
-                    android:onClick="@{()->viewModel.observer.onFinishWithSuccess()}"
                     android:background="@drawable/layout_bg_transparent_gray_selector_with_bg_transparent"
+                    android:onClick="@{()->viewModel.observer.onFinishWithSuccess()}"
                     android:padding="@dimen/padding_20"
                     android:src="@drawable/done_white_icon" />
             </LinearLayout>
@@ -78,9 +78,9 @@
                     android:layout_centerVertical="true"
                     android:layout_toStartOf="@id/iv_camera_flash_auto"
                     android:alpha="0.4"
-                    android:onClick="@{()->viewModel.observer.setCameraFlashOff()}"
                     android:background="@drawable/layout_bg_transparent_gray_selector_with_bg_transparent"
                     android:contentDescription="@string/app_name"
+                    android:onClick="@{()->viewModel.observer.setCameraFlashOff()}"
                     android:padding="@dimen/padding_15"
                     android:src="@drawable/ic_flash_off" />
 
@@ -91,9 +91,9 @@
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@+id/iv_camera_flash_auto"
                     android:alpha="0.4"
-                    android:onClick="@{()->viewModel.observer.setCameraFlashOn()}"
                     android:background="@drawable/layout_bg_transparent_gray_selector_with_bg_transparent"
                     android:contentDescription="@string/app_name"
+                    android:onClick="@{()->viewModel.observer.setCameraFlashOn()}"
                     android:padding="@dimen/padding_15"
                     android:src="@drawable/ic_flash_on" />
 
@@ -102,9 +102,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:onClick="@{()->viewModel.observer.setCameraFlashAuto()}"
                     android:background="@drawable/layout_bg_transparent_gray_selector_with_bg_transparent"
                     android:contentDescription="@string/app_name"
+                    android:onClick="@{()->viewModel.observer.setCameraFlashAuto()}"
                     android:padding="@dimen/padding_15"
                     android:src="@drawable/ic_flash_auto" />
 
@@ -130,8 +130,8 @@
                 android:layout_marginEnd="@dimen/padding_20"
                 android:background="@drawable/circle_bg_transparent_strok_white_with_transparent_gray_selector"
                 android:contentDescription="@string/app_name"
-                android:padding="@dimen/padding_20"
                 android:onClick="@{()->viewModel.observer.onSwitchCamera()}"
+                android:padding="@dimen/padding_20"
                 android:src="@drawable/ic_camera_rotation" />
 
             <ImageView
@@ -163,13 +163,197 @@
             android:layout_above="@id/layoutCapture"
             android:layout_below="@id/layoutActionBar" />
 
-        <ImageView
-            android:id="@+id/ivImageCaptured"
+        <RelativeLayout
+            android:id="@+id/finalPhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@id/layoutCapture"
-            android:layout_below="@id/layoutActionBar"
-            android:background="@color/black" />
+            android:layout_below="@id/layoutActionBar">
+
+            <ImageView
+                android:id="@+id/ivImageCaptured"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent23_colorPrimaryDark"
+                android:padding="@dimen/padding_10"
+                android:onClick="@{()->viewModel.observer.openLocationDetails()}"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/padding_30"
+                    android:layout_marginEnd="@dimen/padding_30"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/avenir_heavy"
+                    android:hint="@string/place_name"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="@{viewModel.placeName}"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:textSize="@dimen/font_size_30" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/padding_30"
+                    android:layout_marginEnd="@dimen/padding_30"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/avenir_heavy"
+                            android:includeFontPadding="false"
+                            android:text="@{@string/temperature_with_degree(viewModel.tempr)}"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/white"
+                            android:textSize="@dimen/font_size_25" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/avenir_roman"
+                                android:includeFontPadding="false"
+                                android:text="@{@string/temperature_with_degree(viewModel.minTempr)}"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="@dimen/font_size_14" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/padding_5"
+                                android:layout_marginEnd="@dimen/padding_5"
+                                android:fontFamily="@font/avenir_heavy"
+                                android:includeFontPadding="false"
+                                android:text="/"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="@dimen/font_size_14" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/avenir_roman"
+                                android:includeFontPadding="false"
+                                android:text="@{@string/temperature_with_degree(viewModel.maxTempr)}"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="@dimen/font_size_14" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/padding_15"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/avenir_roman"
+                                android:hint="@string/today"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:text="@{viewModel.dayOfWeek}"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="@dimen/font_size_20" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/padding_15"
+                                android:fontFamily="@font/avenir_roman"
+                                android:includeFontPadding="false"
+                                android:text="->"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="@dimen/font_size_20" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/padding_10"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/avenir_roman"
+                                android:hint="@string/clear"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:text="@{viewModel.weatherStatus}"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="@dimen/font_size_20" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/padding_5"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/avenir_roman"
+                                android:hint="@string/time"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:text="@{viewModel.time}"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="@dimen/font_size_16" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/padding_10"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/avenir_roman"
+                                android:hint="@string/date"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:text="@{viewModel.date}"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="@dimen/font_size_16" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
+
 
     </RelativeLayout>
 
