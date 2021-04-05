@@ -45,7 +45,6 @@ abstract class BaseActivity(
     var showBack: Boolean,
     var showMenu: Boolean,
     var showNotification: Boolean,
-    var showHomeButton: Boolean,
     var appBarWhite: Boolean
 ) : AppCompatActivity() {
 
@@ -91,7 +90,6 @@ abstract class BaseActivity(
             showBack,
             showMenu,
             showNotification,
-            showHomeButton,
             appBarWhite
         )
         doOnCreate(savedInstanceState)
@@ -114,12 +112,6 @@ abstract class BaseActivity(
         }
 
         override fun onAny1ButtonClicked() {
-        }
-
-        override fun onButtonAddClicked() {
-            var intent = Intent(this@BaseActivity, CaptureImageActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(R.anim.slide_from_right_to_left, R.anim.slide_in_left)
         }
 
         override fun onAny2ButtonClicked() {
@@ -231,25 +223,6 @@ abstract class BaseActivity(
             if (isVisible) View.VISIBLE else View.INVISIBLE
     }
 
-    fun setHomeButtonVisibility(isVisible: Boolean) {
-        baseBinding.ivHomeButton.visibility =
-            if (isVisible) View.VISIBLE else View.GONE
-        if (isVisible) {
-            val anim = ScaleAnimation(
-                0.8f, 1f,  // Start and end values for the X axis scaling
-                0.8f, 1f,  // Start and end values for the Y axis scaling
-                Animation.RELATIVE_TO_SELF, 0.5f,  // Pivot point of X scaling
-                Animation.RELATIVE_TO_SELF, 0.5f
-            ) // Pivot point of Y scaling
-            // Needed to keep the result of the animation
-            anim.fillAfter = true
-            anim.duration = 100
-            anim.repeatCount = 8
-            anim.repeatMode = Animation.REVERSE
-            baseBinding.ivHomeButton.startAnimation(anim)
-        }
-    }
-
     fun setActionBarVisibilty(isVisible: Boolean) {
         baseBinding.layoutContainerActionBar.visibility =
             if (isVisible) View.VISIBLE else View.GONE
@@ -297,7 +270,6 @@ abstract class BaseActivity(
         showBack: Boolean,
         showMenu: Boolean,
         showNotification: Boolean,
-        showHomeButton: Boolean,
         appBarWhite: Boolean
     ) {
         setActionBarVisibilty(showHeader)
@@ -306,7 +278,6 @@ abstract class BaseActivity(
         setMenuIconVisibility(showMenu)
         setAnyIcon1Visibility(showNotification)
         setAnyIcon1NotifyVisibility(false)
-        setHomeButtonVisibility(showHomeButton)
         setHeaderTitle(title)
 
         if (appBarWhite) {

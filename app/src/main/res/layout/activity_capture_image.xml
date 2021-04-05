@@ -174,184 +174,206 @@
                 android:id="@+id/ivImageCaptured"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/black" />
+                android:background="@color/black"
+                android:scaleType="fitCenter" />
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/transparent23_colorPrimaryDark"
-                android:padding="@dimen/padding_10"
-                android:onClick="@{()->viewModel.observer.openLocationDetails()}"
-                android:orientation="vertical">
+                android:background="@color/transparent23_colorPrimaryDark">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/padding_30"
-                    android:layout_marginEnd="@dimen/padding_30"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/avenir_heavy"
-                    android:hint="@string/place_name"
+                    android:layout_margin="@dimen/padding_10"
+                    android:fontFamily="@font/avenir_roman"
+                    android:gravity="center"
                     android:includeFontPadding="false"
-                    android:maxLines="1"
-                    android:text="@{viewModel.placeName}"
+                    android:padding="@dimen/padding_10"
+                    android:text="@{viewModel.connectionErrorMessage}"
                     android:textColor="@color/white"
                     android:textColorHint="@color/white"
-                    android:textSize="@dimen/font_size_30" />
+                    android:textSize="@dimen/font_size_16"
+                    android:visibility="@{viewModel.isShowLoader()?View.VISIBLE:View.GONE}" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/padding_30"
-                    android:layout_marginEnd="@dimen/padding_30"
-                    android:orientation="horizontal">
+                    android:onClick="@{()->viewModel.observer.openLocationDetails()}"
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_10"
+                    android:visibility="@{viewModel.isShowLoader()?View.GONE:View.VISIBLE}">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/avenir_heavy"
-                            android:includeFontPadding="false"
-                            android:text="@{@string/temperature_with_degree(viewModel.tempr)}"
-                            android:textColor="@color/white"
-                            android:textColorHint="@color/white"
-                            android:textSize="@dimen/font_size_25" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/avenir_roman"
-                                android:includeFontPadding="false"
-                                android:text="@{@string/temperature_with_degree(viewModel.minTempr)}"
-                                android:textColor="@color/white"
-                                android:textColorHint="@color/white"
-                                android:textSize="@dimen/font_size_14" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/padding_5"
-                                android:layout_marginEnd="@dimen/padding_5"
-                                android:fontFamily="@font/avenir_heavy"
-                                android:includeFontPadding="false"
-                                android:text="/"
-                                android:textColor="@color/white"
-                                android:textColorHint="@color/white"
-                                android:textSize="@dimen/font_size_14" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/avenir_roman"
-                                android:includeFontPadding="false"
-                                android:text="@{@string/temperature_with_degree(viewModel.maxTempr)}"
-                                android:textColor="@color/white"
-                                android:textColorHint="@color/white"
-                                android:textSize="@dimen/font_size_14" />
-
-                        </LinearLayout>
-                    </LinearLayout>
-
+                        android:layout_marginStart="@dimen/padding_30"
+                        android:layout_marginEnd="@dimen/padding_30"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/avenir_heavy"
+                        android:hint="@string/place_name"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:text="@{viewModel.placeName}"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/white"
+                        android:textSize="@dimen/font_size_26" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/padding_15"
-                        android:orientation="vertical">
+                        android:layout_marginStart="@dimen/padding_30"
+                        android:layout_marginEnd="@dimen/padding_30"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/avenir_heavy"
+                                android:includeFontPadding="false"
+                                android:text="@{@string/temperature_with_degree(viewModel.tempr)}"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="@dimen/font_size_25" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/avenir_roman"
+                                    android:includeFontPadding="false"
+                                    android:text="@{@string/temperature_with_degree(viewModel.minTempr)}"
+                                    android:textColor="@color/white"
+                                    android:textColorHint="@color/white"
+                                    android:textSize="@dimen/font_size_14" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/padding_5"
+                                    android:layout_marginEnd="@dimen/padding_5"
+                                    android:fontFamily="@font/avenir_heavy"
+                                    android:includeFontPadding="false"
+                                    android:text="/"
+                                    android:textColor="@color/white"
+                                    android:textColorHint="@color/white"
+                                    android:textSize="@dimen/font_size_14" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/avenir_roman"
+                                    android:includeFontPadding="false"
+                                    android:text="@{@string/temperature_with_degree(viewModel.maxTempr)}"
+                                    android:textColor="@color/white"
+                                    android:textColorHint="@color/white"
+                                    android:textSize="@dimen/font_size_14" />
+
+                            </LinearLayout>
+                        </LinearLayout>
+
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:layout_marginStart="@dimen/padding_15"
+                            android:orientation="vertical">
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ellipsize="end"
-                                android:fontFamily="@font/avenir_roman"
-                                android:hint="@string/today"
-                                android:includeFontPadding="false"
-                                android:maxLines="1"
-                                android:text="@{viewModel.dayOfWeek}"
-                                android:textColor="@color/white"
-                                android:textColorHint="@color/white"
-                                android:textSize="@dimen/font_size_20" />
+                                android:orientation="horizontal">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/padding_15"
-                                android:fontFamily="@font/avenir_roman"
-                                android:includeFontPadding="false"
-                                android:text="->"
-                                android:textColor="@color/white"
-                                android:textColorHint="@color/white"
-                                android:textSize="@dimen/font_size_20" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:fontFamily="@font/avenir_roman"
+                                    android:hint="@string/today"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:text="@{viewModel.dayOfWeek}"
+                                    android:textColor="@color/white"
+                                    android:textColorHint="@color/white"
+                                    android:textSize="@dimen/font_size_20" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/padding_15"
+                                    android:fontFamily="@font/avenir_roman"
+                                    android:includeFontPadding="false"
+                                    android:text="->"
+                                    android:textColor="@color/white"
+                                    android:textColorHint="@color/white"
+                                    android:textSize="@dimen/font_size_20" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/padding_10"
+                                    android:ellipsize="end"
+                                    android:fontFamily="@font/avenir_roman"
+                                    android:hint="@string/clear"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:text="@{viewModel.weatherStatus}"
+                                    android:textColor="@color/white"
+                                    android:textColorHint="@color/white"
+                                    android:textSize="@dimen/font_size_20" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/padding_10"
-                                android:ellipsize="end"
-                                android:fontFamily="@font/avenir_roman"
-                                android:hint="@string/clear"
-                                android:includeFontPadding="false"
-                                android:maxLines="1"
-                                android:text="@{viewModel.weatherStatus}"
-                                android:textColor="@color/white"
-                                android:textColorHint="@color/white"
-                                android:textSize="@dimen/font_size_20" />
+                                android:layout_marginTop="@dimen/padding_5"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:fontFamily="@font/avenir_roman"
+                                    android:hint="@string/time"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:text="@{viewModel.time}"
+                                    android:textColor="@color/white"
+                                    android:textColorHint="@color/white"
+                                    android:textSize="@dimen/font_size_16" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/padding_10"
+                                    android:ellipsize="end"
+                                    android:fontFamily="@font/avenir_roman"
+                                    android:hint="@string/date"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:text="@{viewModel.date}"
+                                    android:textColor="@color/white"
+                                    android:textColorHint="@color/white"
+                                    android:textSize="@dimen/font_size_16" />
+
+                            </LinearLayout>
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/padding_5"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:ellipsize="end"
-                                android:fontFamily="@font/avenir_roman"
-                                android:hint="@string/time"
-                                android:includeFontPadding="false"
-                                android:maxLines="1"
-                                android:text="@{viewModel.time}"
-                                android:textColor="@color/white"
-                                android:textColorHint="@color/white"
-                                android:textSize="@dimen/font_size_16" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/padding_10"
-                                android:ellipsize="end"
-                                android:fontFamily="@font/avenir_roman"
-                                android:hint="@string/date"
-                                android:includeFontPadding="false"
-                                android:maxLines="1"
-                                android:text="@{viewModel.date}"
-                                android:textColor="@color/white"
-                                android:textColorHint="@color/white"
-                                android:textSize="@dimen/font_size_16" />
-
-                        </LinearLayout>
                     </LinearLayout>
 
                 </LinearLayout>
 
-            </LinearLayout>
+            </RelativeLayout>
         </RelativeLayout>
 
 

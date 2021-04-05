@@ -2,8 +2,10 @@ package com.weather.photo.view.activity.baseActivity
 
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.room.Room
 import com.weather.photo.MyApplication
 import com.weather.photo.R
+import com.weather.photo.model.database.AppDatabase
 import com.weather.photo.util.Preferences
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,6 +20,12 @@ open class BaseActivityViewModel(
     var application: MyApplication
 ) : AndroidViewModel(application) {
     lateinit var baseViewModelObserver: BaseViewModelObserver
+    var db: AppDatabase = Room.databaseBuilder(
+        application.applicationContext,
+        AppDatabase::class.java,
+        "WeatherPhotoDB"
+    ).build()
+
     var keyWord = MutableLiveData<String>()
 
     var baseCompositeDisposable = CompositeDisposable()
@@ -32,10 +40,6 @@ open class BaseActivityViewModel(
 
     fun onButtonMenuClicked() {
         baseViewModelObserver.onMenuButtonClicked()
-    }
-
-    fun onButtonHomeClicked() {
-        baseViewModelObserver.onButtonAddClicked()
     }
 
     fun onButtonAny2Clicked() {
@@ -63,7 +67,6 @@ open class BaseActivityViewModel(
         fun onBackButtonClicked()
         fun onMenuButtonClicked()
         fun onAny1ButtonClicked()
-        fun onButtonAddClicked()
         fun onAny2ButtonClicked()
         fun onSearchClicked()
         fun onLoginAgain()

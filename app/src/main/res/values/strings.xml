@@ -59,5 +59,16 @@
     <string name="time">Time</string>
     <string name="date">Date</string>
     <string name="clear">Clear</string>
+    <string name="you_must_allow_location_permission">You must allow location permission</string>
+    <string name="location_required">Location required</string>
+    <string name="you_must_enable_device_location_to_get_data_based_on_your_location">You must enable device location to get data based on your location</string>
+    <string name="fetching_weather_data">Fetching weather data</string>
+    <string name="edit_location">Edit Location</string>
+    <string name="required_input">Required input</string>
+    <string name="fetching_your_location">Fetching your location</string>
+    <string name="cant_find_the_image_file">Can\'t find the image file</string>
+    <string name="please_wait_until_fetching_location_data">Please wait until fetching location data</string>
+
+
 </resources>
 

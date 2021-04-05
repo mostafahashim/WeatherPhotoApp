@@ -10,18 +10,9 @@ fun getDefaultParams(
     application: MyApplication,
     params: HashMap<String, Any>
 ): MutableMap<String, Any> {
-    params["notification_Token"] = Preferences.getUserToken()
-    params["userId"] = Preferences.getUserID()
-    params["user_id"] = Preferences.getUserID()
-    params["user_type"] = Preferences.getUserType()
-    params["userType"] = Preferences.getUserType()
+    params["appid"] = "8fa4589dfa68cb117ddeb64b68e27777"
+    params["units"] = "metric"
     params["lang"] = Preferences.getApplicationLocale()
-    params["version_code"] = BuildConfig.VERSION_CODE.toString()
-    params["os_version"] = application.getOSVersion()
-    params["mobile_model"] = application.getDeviceModel()
-
-    params["applicationId"] = "0"
-    params["android"] = true
     return params
 }
 

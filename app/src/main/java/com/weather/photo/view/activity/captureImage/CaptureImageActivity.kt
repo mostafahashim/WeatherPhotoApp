@@ -1,26 +1,38 @@
 package com.weather.photo.view.activity.captureImage
 
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.View
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.weather.photo.R
 import com.weather.photo.cameraCore.Camera2
 import com.weather.photo.cameraCore.CameraPreview
 import com.weather.photo.databinding.ActivityCaptureImageBinding
-import com.weather.photo.util.DataProvider
-import com.weather.photo.util.GalleryConstants
+import com.weather.photo.locationUtil.turnGPSOn
+import com.weather.photo.observer.OnAskUserAction
+import com.weather.photo.observer.OnEditPlaceData
+import com.weather.photo.util.*
 import com.weather.photo.view.activity.baseActivity.BaseActivity
+import com.weather.photo.view.sub.PopupDialogEditPlace
 import java.io.File
+
 
 class CaptureImageActivity : BaseActivity(
     R.string.app_name, false, false, false,
-    false, false, false, false, false,
+    false, false, false, false,
 ), CaptureImageViewModel.Observer {
 
     lateinit var binding: ActivityCaptureImageBinding
@@ -41,19 +53,22 @@ class CaptureImageActivity : BaseActivity(
 
 
     override fun initializeViews() {
-        onPrepareNewImageViews()
-
         if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED
             && checkSelfPermission(android.Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
             requestPermissions(
                 arrayOf(
                     android.Manifest.permission.READ_EXTERNAL_STORAGE,
                     android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    android.Manifest.permission.CAMERA
+                    android.Manifest.permission.CAMERA,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION
                 ),
                 GalleryConstants.REQUEST_Permission_Gallery
             )
@@ -66,6 +81,7 @@ class CaptureImageActivity : BaseActivity(
             binding.viewModel?.camera2 = Camera2(this, binding.cameraView)
         }
         onPrepareNewImageViews()
+        updateLocationUI()
     }
 
     override fun setListener() {
@@ -112,7 +128,7 @@ class CaptureImageActivity : BaseActivity(
             binding.cameraView.visibility = View.GONE
             binding.cameraPreviewPreLoliPop.visibility = View.GONE
 
-            binding.layoutCapture.visibility = View.GONE
+            binding.layoutCapture.visibility = View.INVISIBLE
             binding.cameraView.visibility = View.GONE
             binding.layoutFlash.visibility = View.GONE
 
@@ -198,11 +214,59 @@ class CaptureImageActivity : BaseActivity(
         }
     }
 
+    override fun onShowHideLoadingProgress(isShow: Boolean) {
+        showHideProgressDialog(isShow)
+    }
+
+    override fun onShowHideMessageDialog(title: String, message: String, isShow: Boolean) {
+        showHideMessageDialog(isShow, getString(R.string.error), message)
+    }
+
+    private fun getBitmapFromView(view: View): Bitmap? {
+        val returnedBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(returnedBitmap)
+        val bgDrawable = view.background
+        if (bgDrawable != null) {
+            bgDrawable.draw(canvas)
+        } else {
+            canvas.drawColor(Color.BLACK)
+        }
+        view.draw(canvas)
+        return returnedBitmap
+    }
+
     override fun onFinishWithSuccess() {
-        var intent = Intent()
-        intent.putExtra("ImageFile", binding.viewModel?.savedFile)
-        setResult(RESULT_OK, intent)
-        finish_activity()
+        if (binding.viewModel?.isShowLoader?.value!!) {
+            //prevent save image without weather data
+            Toast.makeText(
+                this@CaptureImageActivity,
+                getString(R.string.please_wait_until_fetching_location_data),
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+        onShowHideLoadingProgress(true)
+        Handler(Looper.getMainLooper()).postDelayed({
+            var bitmap = getBitmapFromView(binding.finalPhoto)
+            val imagePath = DataProvider().saveImage(
+                bitmap!!,
+                this@CaptureImageActivity
+            )
+            if (binding.viewModel?.isSavedFileInitialized()!! && binding.viewModel?.savedFile != null && binding.viewModel?.savedFile!!.exists()) {
+                binding.viewModel?.savedFile?.delete()
+                //then delete it from media store (gallery)
+                DataProvider().deleteFileFromMediaStore(
+                    contentResolver,
+                    binding.viewModel?.savedFile!!
+                )
+            }
+            binding.viewModel?.savedFile = File(imagePath)
+            onShowHideLoadingProgress(false)
+            var intent = Intent()
+            intent.putExtra("ImageFile", binding.viewModel?.savedFile)
+            setResult(RESULT_OK, intent)
+            finish_activity()
+        }, 500)
     }
 
     override fun setCameraFlashOn() {
@@ -236,7 +300,18 @@ class CaptureImageActivity : BaseActivity(
     }
 
     override fun openLocationDetails() {
+        var popupDialogEditPlace = PopupDialogEditPlace()
+        popupDialogEditPlace.setOnEditPlaceDataObserver(object : OnEditPlaceData {
+            override fun onEditPlaceName(name: String) {
+                binding.viewModel?.placeName?.value = name
+            }
 
+        })
+        var bundle = Bundle()
+        bundle.putString("placeName", binding.viewModel?.placeName?.value)
+        popupDialogEditPlace.arguments = bundle
+        popupDialogEditPlace.isCancelable = true
+        popupDialogEditPlace.show(supportFragmentManager, "PopupDialogEditPlace")
     }
 
     override fun onPause() {
@@ -260,6 +335,90 @@ class CaptureImageActivity : BaseActivity(
         }
         onPrepareNewImageViews()
         super.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::locationManager.isInitialized)
+            locationManager.removeUpdates(locationListener)
+    }
+
+    // location retrieved by the Fused Location Provider.
+    lateinit var locationManager: LocationManager
+
+    private fun updateLocationUI() {
+        if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                GalleryConstants.REQUEST_Permission_Gallery
+            )
+            return
+        }
+
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                10.toLong(),
+                0.1.toFloat(), locationListener
+            )
+        } else {
+            askUserTurnGPS()
+        }
+    }
+
+    var locationListener = object : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            if (binding.viewModel?.mLastKnownLocation == null) {
+                binding.viewModel?.mLastKnownLocation = location
+                binding.viewModel!!.getWeatherDataApi()
+            }
+        }
+
+        override fun onProviderDisabled(provider: String) {
+            askUserTurnGPS()
+        }
+
+        override fun onProviderEnabled(provider: String) {
+            updateLocationUI()
+        }
+    }
+
+    fun askUserTurnGPS() {
+        turnGPSOn(this@CaptureImageActivity, object : OnAskUserAction {
+            override fun onPositiveAction() {
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivityForResult(intent, LocationPermissionRequest)
+            }
+
+            override fun onNegativeAction() {
+            }
+        })
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            GalleryConstants.REQUEST_Permission_Gallery -> {
+                // If request is cancelled, the result arrays are empty.
+                initializeViews()
+            }
+            else -> {
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == LocationPermissionRequest) {
+            updateLocationUI()
+        }
     }
 
 }

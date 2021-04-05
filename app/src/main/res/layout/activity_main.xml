@@ -16,5 +16,59 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/layoutLoader"
+                layout="@layout/layout_loader_shimmer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:visibility="@{viewModel.isShowLoader()?View.VISIBLE : View.GONE}" />
+
+            <include
+                android:id="@+id/layoutNoData"
+                layout="@layout/layout_error_no_data"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:visibility="@{viewModel.isShowNoData()?View.VISIBLE : View.GONE}" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/padding_15"
+                android:layout_marginTop="@dimen/padding_5"
+                android:layout_marginEnd="@dimen/padding_15"
+                android:layout_marginBottom="@dimen/padding_5"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:visibility="@{!viewModel.isShowLoader() &amp;&amp; !viewModel.isShowNoData() ?View.VISIBLE : View.GONE}"
+                app:adapter="@{viewModel.recyclerImagesAdapter}"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:spanCount="2" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/ivHomeButton"
+            android:layout_width="@dimen/padding_52"
+            android:layout_height="@dimen/padding_52"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="@dimen/padding_35"
+            android:layout_marginBottom="@dimen/padding_50"
+            android:background="@drawable/circle_orange_selector"
+            android:onClick="@{()->viewModel.onButtonHomeClicked()}"
+            android:padding="@dimen/padding_15"
+            android:src="@drawable/camera_menu_icn" />
+
     </RelativeLayout>
 </layout>

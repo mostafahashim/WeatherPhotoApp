@@ -25,27 +25,28 @@ android {
 
     defaultConfig {
         applicationId "com.weather.photo"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "BASE_URL", '"https://www.elshamystore.com/dev/public/api/v1/"'
+            buildConfigField "String", "BASE_URL", '"http://api.openweathermap.org/data/2.5/"'
             manifestPlaceholders = [usesCleartextTraffic: "true"]
         }
 
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "BASE_URL", '"https://www.elshamystore.com/dev/public/api/v1/"'
+            buildConfigField "String", "BASE_URL", '"http://api.openweathermap.org/data/2.5/"'
             manifestPlaceholders = [usesCleartextTraffic: "true"]
         }
     }
@@ -113,6 +114,14 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
+
+    implementation 'androidx.room:room-runtime:2.2.6'
+    kapt 'androidx.room:room-compiler:2.2.6'
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation 'androidx.room:room-ktx:2.2.6'
+    // optional - RxJava support for Room
+    implementation 'androidx.room:room-rxjava2:2.2.6'
+
     //Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
     //rx with retrofit
@@ -149,7 +158,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:18.0.2'
     implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
     implementation 'com.google.android.gms:play-services-analytics:17.0.0'
-    implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
 // Recommended: Add the Firebase SDK for Google Analytics.
     implementation 'com.google.firebase:firebase-analytics:18.0.2'
     //progress loader
@@ -164,11 +172,7 @@ dependencies {
     implementation 'com.booking:rtlviewpager:1.0.1'
     implementation 'fr.baloomba:viewpagerindicator:2.4.2'
     implementation 'com.tbuonomo.andrui:viewpagerdotsindicator:3.0.3'
-    implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'me.relex:circleindicator:2.1.4'
-    //material date picker
-    implementation 'com.wdullaer:materialdatetimepicker:4.2.3'
-    // ratting bar
-    implementation 'com.github.techery:properratingbar:527d37188c'
+    implementation project(':imageviewer')
 
 }
