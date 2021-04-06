@@ -76,23 +76,23 @@ class PopupDialogEditPlace : BaseDialogFragment() {
 
     var placeName = ""
 
-    fun initializeViews() {
+    private fun initializeViews() {
         getArgumentsData()
         setData()
     }
 
-    fun getArgumentsData() {
+    private fun getArgumentsData() {
         if (arguments != null) {
             placeName = requireArguments().getString("placeName", "")
             binding.edttextName.setText(placeName)
         }
     }
 
-    fun setData() {
+    private fun setData() {
         binding.edttextName.setText(placeName)
     }
 
-    fun setListener() {
+    private fun setListener() {
         binding.btnDialogSureSubmit.setOnClickListener {
             if (binding.edttextName.text.toString().trim().isNotEmpty()) {
                 if (::onEditPlaceData.isInitialized)

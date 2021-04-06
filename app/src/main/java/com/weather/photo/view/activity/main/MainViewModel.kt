@@ -41,8 +41,8 @@ class MainViewModel(
         getLocalGalleryModels()
     }
 
-    fun updateBooksAdapterColumnWidth(screenWidth: Int) {
-        var columnWidth = (150.00 * screenWidth) / 360.00
+    fun updateBooksAdapterColumnWidth(screenWidth: Int, isLandScape: Boolean) {
+        var columnWidth = (150.00 * (if (isLandScape) (screenWidth / 2) else screenWidth)) / 360.00
         recyclerImagesAdapter.setColumnWidthAndRatio(columnWidth)
         recyclerImagesAdapter.notifyDataSetChanged()
     }

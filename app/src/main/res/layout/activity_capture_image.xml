@@ -149,8 +149,8 @@
 
         <com.weather.photo.cameraCore.AutoFitTextureView
             android:id="@+id/cameraView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_above="@id/layoutCapture"
             android:layout_below="@id/layoutActionBar"
             android:adjustViewBounds="true"
@@ -165,8 +165,8 @@
 
         <RelativeLayout
             android:id="@+id/finalPhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_above="@id/layoutCapture"
             android:layout_below="@id/layoutActionBar">
 

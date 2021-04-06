@@ -12,7 +12,6 @@ import android.view.View
 @Deprecated("used when given support below api 21")
 class CameraPreview(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
-
     private var onPictureListener: (Bitmap) -> Unit = {}
 
     private val pictureCallback = Camera.PictureCallback { data, camera ->

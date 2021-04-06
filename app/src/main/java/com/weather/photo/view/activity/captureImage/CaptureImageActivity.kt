@@ -29,7 +29,6 @@ import com.weather.photo.view.activity.baseActivity.BaseActivity
 import com.weather.photo.view.sub.PopupDialogEditPlace
 import java.io.File
 
-
 class CaptureImageActivity : BaseActivity(
     R.string.app_name, false, false, false,
     false, false, false, false,

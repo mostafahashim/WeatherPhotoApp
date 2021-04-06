@@ -2,6 +2,7 @@ package com.weather.photo.view.activity.main
 
 import android.content.ContentUris
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaScannerConnection
@@ -18,6 +19,7 @@ import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.stfalcon.imageviewer.StfalconImageViewer
 import com.weather.photo.R
@@ -59,12 +61,35 @@ class MainActivity : BaseActivity(
 
 
     override fun initializeViews() {
+        var isLandScape = false
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            isLandScape = true
+            binding.recyclerView.layoutManager = GridLayoutManager(this, 4)
+//            var screenWidth: Int = ScreenSizeUtils().getScreenWidth(this)
+//            binding.viewModel!!.updateBooksAdapterColumnWidth(screenWidth)
+        } else if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            isLandScape = false
+            binding.recyclerView.layoutManager = GridLayoutManager(this, 2)
+//            var screenWidth: Int = ScreenSizeUtils().getScreenWidth(this)
+//            binding.viewModel!!.updateBooksAdapterColumnWidth(screenWidth)
+        }
+
         var screenWidth: Int = ScreenSizeUtils().getScreenWidth(this)
-        binding.viewModel!!.updateBooksAdapterColumnWidth(screenWidth)
+        binding.viewModel!!.updateBooksAdapterColumnWidth(screenWidth, isLandScape)
         setHomeButtonVisibility(true)
     }
 
-    fun setHomeButtonVisibility(isVisible: Boolean) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            binding.recyclerView.layoutManager = GridLayoutManager(this, 4)
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            binding.recyclerView.layoutManager = GridLayoutManager(this, 2)
+        }
+    }
+
+    private fun setHomeButtonVisibility(isVisible: Boolean) {
         binding.ivHomeButton.visibility =
             if (isVisible) View.VISIBLE else View.GONE
         if (isVisible) {
@@ -145,7 +170,7 @@ class MainActivity : BaseActivity(
                         startActivity(Intent.createChooser(share, getString(R.string.share_via)))
                     } else {
                         Toast.makeText(
-                            this@MainActivity,context.getString(R.string.cant_find_the_image_file),
+                            this@MainActivity, context.getString(R.string.cant_find_the_image_file),
                             Toast.LENGTH_LONG
                         ).show()
                     }
@@ -181,69 +206,6 @@ class MainActivity : BaseActivity(
             .show()
     }
 
-    private fun getLastCapturedGalleryImage(uri: Uri): GalleryModel? {
-        try {
-            val columnsImages = arrayOf(
-                MediaStore.Images.Media.DATA,
-                MediaStore.Images.Media.DATE_MODIFIED,
-                MediaStore.Images.Media.DATE_ADDED,
-                "bucket_id",
-                "bucket_display_name",
-                MediaStore.Images.Media._ID
-            )
-            val orderByimage = MediaStore.Images.Media.DATE_MODIFIED
-            val imagecursor = contentResolver.query(
-                uri,
-                columnsImages, null, null, "$orderByimage DESC"
-            )
-            if (imagecursor != null && imagecursor.count > 0) {
-                imagecursor.moveToFirst()
-                val item = GalleryModel()
-                item.index_when_selected = 1
-                item.isSeleted = true
-                // get path
-                val dataColumnIndex = imagecursor
-                    .getColumnIndex(MediaStore.Images.Media.DATA)
-                item.sdcardPath = imagecursor.getString(dataColumnIndex)
-                // get date modified
-                var dateColumnIndex = imagecursor
-                    .getColumnIndex(MediaStore.Images.Media.DATE_MODIFIED)
-                var Image_date = imagecursor.getString(dateColumnIndex)
-                if (Image_date != null) {
-                    item.item_date_modified = Integer.parseInt(Image_date)
-                } else {
-                    dateColumnIndex = imagecursor
-                        .getColumnIndex(MediaStore.Images.Media.DATE_ADDED)
-                    Image_date = imagecursor.getString(dateColumnIndex)
-                    if (Image_date != null) {
-                        item.item_date_modified = Integer.parseInt(Image_date)
-                    } else {
-                        item.item_date_modified = SystemClock.elapsedRealtime().toInt()
-                    }
-                }
-                // get uri
-                // content://media/external/images/media/19490
-                val imageuri = ContentUris
-                    .withAppendedId(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        imagecursor.getInt(
-                            imagecursor
-                                .getColumnIndex(MediaStore.Images.Media._ID)
-                        ).toLong()
-                    )
-                item.itemUrI = imageuri.toString()
-                //get albumName
-                val albumNameColumnIndex = imagecursor
-                    .getColumnIndex("bucket_display_name")
-                item.albumName = imagecursor.getString(albumNameColumnIndex)
-                return item
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RequestCodeCaptureActivity && resultCode == RESULT_OK && data != null
@@ -265,15 +227,9 @@ class MainActivity : BaseActivity(
                                 applicationContext, fileImage.path
                             )
                             var newUri = Uri.parse(itemUrI)
-                            var galleryModel = getLastCapturedGalleryImage(newUri)
+                            var galleryModel =
+                                DataProvider().getLastCapturedGalleryImage(this@MainActivity, newUri)
                             if (galleryModel != null) {
-                                /*if (binding.viewModel?.galleryModels.isNullOrEmpty()) {
-                                    binding.viewModel?.galleryModels = ArrayList()
-                                    binding.viewModel?.galleryModels?.add(galleryModel)
-                                } else {
-                                    binding.viewModel?.galleryModels?.add(0, galleryModel)
-                                }
-                                binding.viewModel?.recyclerImagesAdapter?.notifyDataSetChanged()*/
                                 //save to data base
                                 binding.viewModel?.isOpenViewDialog = true
                                 binding.viewModel?.compositeDisposable?.add(Completable.fromCallable {

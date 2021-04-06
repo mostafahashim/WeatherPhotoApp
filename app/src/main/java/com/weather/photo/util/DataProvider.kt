@@ -14,9 +14,11 @@ import android.media.ExifInterface
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Build
+import android.os.SystemClock
 import android.provider.MediaStore
 import androidx.annotation.AnyRes
 import com.weather.photo.R
+import com.weather.photo.model.GalleryModel
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -528,5 +530,68 @@ class DataProvider {
 		}
 
 		return strMyImagePath ?: path
+	}
+
+	fun getLastCapturedGalleryImage(activity: Activity,uri: Uri): GalleryModel? {
+		try {
+			val columnsImages = arrayOf(
+				MediaStore.Images.Media.DATA,
+				MediaStore.Images.Media.DATE_MODIFIED,
+				MediaStore.Images.Media.DATE_ADDED,
+				"bucket_id",
+				"bucket_display_name",
+				MediaStore.Images.Media._ID
+			)
+			val orderByimage = MediaStore.Images.Media.DATE_MODIFIED
+			val imagecursor = activity.contentResolver.query(
+				uri,
+				columnsImages, null, null, "$orderByimage DESC"
+			)
+			if (imagecursor != null && imagecursor.count > 0) {
+				imagecursor.moveToFirst()
+				val item = GalleryModel()
+				item.index_when_selected = 1
+				item.isSeleted = true
+				// get path
+				val dataColumnIndex = imagecursor
+					.getColumnIndex(MediaStore.Images.Media.DATA)
+				item.sdcardPath = imagecursor.getString(dataColumnIndex)
+				// get date modified
+				var dateColumnIndex = imagecursor
+					.getColumnIndex(MediaStore.Images.Media.DATE_MODIFIED)
+				var Image_date = imagecursor.getString(dateColumnIndex)
+				if (Image_date != null) {
+					item.item_date_modified = Integer.parseInt(Image_date)
+				} else {
+					dateColumnIndex = imagecursor
+						.getColumnIndex(MediaStore.Images.Media.DATE_ADDED)
+					Image_date = imagecursor.getString(dateColumnIndex)
+					if (Image_date != null) {
+						item.item_date_modified = Integer.parseInt(Image_date)
+					} else {
+						item.item_date_modified = SystemClock.elapsedRealtime().toInt()
+					}
+				}
+				// get uri
+				// content://media/external/images/media/19490
+				val imageuri = ContentUris
+					.withAppendedId(
+						MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+						imagecursor.getInt(
+							imagecursor
+								.getColumnIndex(MediaStore.Images.Media._ID)
+						).toLong()
+					)
+				item.itemUrI = imageuri.toString()
+				//get albumName
+				val albumNameColumnIndex = imagecursor
+					.getColumnIndex("bucket_display_name")
+				item.albumName = imagecursor.getString(albumNameColumnIndex)
+				return item
+			}
+		} catch (e: Exception) {
+			e.printStackTrace()
+		}
+		return null
 	}
 }
